@@ -19,7 +19,7 @@ async fn e2e() {
     let hdfs_server_url = format!(
         "hdfs://{}:{}/",
         "localhost",
-        server_node.get_host_port_ipv4(PORT_NAMENODE)
+        server_node.get_host_port_ipv4(PORT_NAME_NODE)
     );
 
     info!("HDFS Name Note to be used: [{}]", hdfs_server_url);

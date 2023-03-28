@@ -19,6 +19,7 @@ impl MiniDFS {
             .with_mapped_port((PORT_DATA_NODE_1, PORT_DATA_NODE_1))
             .with_mapped_port((PORT_DATA_NODE_2, PORT_DATA_NODE_2))
             .with_mapped_port((PORT_DATA_NODE_3, PORT_DATA_NODE_3))
+        //.with_container_name("minidfs") // we wont name container as failed or exited may occupy the name
     }
 }
 

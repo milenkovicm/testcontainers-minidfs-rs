@@ -8,11 +8,19 @@ const PORT_DATA_NODE_1: u16 = 50011;
 const PORT_DATA_NODE_2: u16 = 50012;
 const PORT_DATA_NODE_3: u16 = 50013;
 
-pub struct MiniDFS {}
+pub struct MiniDFS {
+    tag: String,
+}
 
 impl MiniDFS {
+    /// Runnable docker image
     pub fn runnable() -> RunnableImage<MiniDFS> {
-        RunnableImage::from(MiniDFS {})
+        Self::runnable_from_tag("latest".into())
+    }
+
+    /// Runnable docker image from a tag
+    pub fn runnable_from_tag(tag: String) -> RunnableImage<MiniDFS> {
+        RunnableImage::from(MiniDFS { tag })
             .with_mapped_port((PORT_NAME_NODE, PORT_NAME_NODE))
             .with_mapped_port((PORT_NAME_NODE_HTTP, PORT_NAME_NODE_HTTP))
             .with_mapped_port((PORT_DATA_N0DE_0, PORT_DATA_N0DE_0))
@@ -24,7 +32,7 @@ impl MiniDFS {
 }
 
 #[derive(Debug, Default, Clone)]
-pub struct MiniDFSArgs {}
+pub struct MiniDFSArgs;
 
 impl ImageArgs for MiniDFSArgs {
     fn into_iterator(self) -> Box<dyn Iterator<Item = String>> {
@@ -40,7 +48,7 @@ impl Image for MiniDFS {
     }
 
     fn tag(&self) -> String {
-        "latest".into()
+        self.tag.to_owned()
     }
 
     fn ready_conditions(&self) -> Vec<WaitFor> {

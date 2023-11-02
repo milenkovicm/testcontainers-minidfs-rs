@@ -6,6 +6,7 @@ use testcontainers_minidfs_rs::*;
 const DATA: &str = "1234567890";
 
 #[tokio::test]
+#[serial_test::serial]
 async fn e2e() {
     let _ = env_logger::builder().is_test(true).try_init();
     std::env::set_var("LIBHDFS3_CONF", "libhdfs3-hdfs-client.xml");
@@ -60,4 +61,52 @@ async fn e2e() {
     assert_eq!(format!("{}{}", DATA, DATA).as_bytes(), result);
 
     fs.delete(&test_dir, true).expect("directory to be deleted");
+}
+
+#[tokio::test]
+#[serial_test::serial]
+async fn e2e_kerberos() {
+    let _ = env_logger::builder().is_test(true).try_init();
+    let docker = clients::Cli::default();
+
+    let container = MiniDFS::builder().with_kerberos(true).build();
+    let kerberos_cache = container.inner().kerberos_cache();
+    let kerberos_config = container.inner().kerberos_config();
+    let hdfs_config = container.inner().hdfs_config();
+
+    let _server_node = docker.run(container);
+
+    assert!(kerberos_cache.is_some());
+    assert!(kerberos_config.is_some());
+    assert!(hdfs_config.is_some());
+
+    let kerberos_cache = kerberos_cache.unwrap();
+    let kerberos_config = kerberos_config.unwrap();
+    let hdfs_config = hdfs_config.unwrap();
+
+    info!("kerberos cache: {:?}", kerberos_cache);
+    info!("kerberos config: {:?}", kerberos_config);
+    info!("hdfs config: {:?}", hdfs_config);
+
+    assert!(kerberos_cache.exists());
+    assert!(kerberos_config.exists());
+    assert!(hdfs_config.exists());
+}
+
+#[tokio::test]
+#[serial_test::serial]
+async fn e2e_config_volume() {
+    let _ = env_logger::builder().is_test(true).try_init();
+    let docker = clients::Cli::default();
+
+    let container = MiniDFS::builder().with_config_volume(true).build();
+
+    let hdfs_config = container.inner().hdfs_config();
+
+    let _server_node = docker.run(container);
+
+    assert!(hdfs_config.is_some());
+    let hdfs_config = hdfs_config.unwrap();
+    info!("hdfs config: {:?}", hdfs_config);
+    assert!(hdfs_config.exists());
 }

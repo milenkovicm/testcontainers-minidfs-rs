@@ -8,9 +8,10 @@ edition = "2021"
 [dependencies]
 log = "0.4"
 testcontainers = "0.15"
-
+project-root = "0.2"
 
 [dev-dependencies]
 env_logger = "0.10"
-tokio = { version = "1.15", features = ["rt", "macros", "time"]}
+tokio = { version = "1", features = ["rt", "macros", "time"]}
 hdfs-native = { git = "https://github.com/milenkovicm/hdfs-native.git"}
+serial_test = { version = "2.0"}

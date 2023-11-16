@@ -3,7 +3,13 @@ name = "testcontainers-minidfs-rs"
 version = "0.2.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+description = "HDFS Test Container"
+homepage = "https://github.com/milenkovicm/testcontainers-minidfs-rs"
+repository = "https://github.com/milenkovicm/testcontainers-minidfs-rs"
+readme = "README.md"
+categories = ["development-tools::testing"]
+keywords = ["testcontainers", "testing", "hdfs", "hsdoop", "integration-testing"]
 
 [dependencies]
 log = "0.4"
@@ -13,5 +19,4 @@ project-root = "0.2"
 [dev-dependencies]
 env_logger = "0.10"
 tokio = { version = "1", features = ["rt", "macros", "time"]}
-# hdfs-native = { git = "https://github.com/milenkovicm/hdfs-native.git"}
 serial_test = { version = "2.0"}

@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 use log::info;
 use std::path::PathBuf;
 use testcontainers::{core::WaitFor, Image, ImageArgs, RunnableImage};
@@ -24,17 +26,22 @@ pub struct MiniDFSBuilder {
 }
 
 impl MiniDFSBuilder {
+    /// Select tag for testcontainer image
     pub fn with_tag(mut self, tag: &str) -> Self {
         self.tag = tag.to_string();
         self
     }
 
+    /// Enable exposing hadoop configuration as as local volume
     pub fn with_config_volume(mut self, enabled: bool) -> Self {
         self.config_volume = enabled;
 
         self
     }
 
+    /// enable kerberos support
+    /// kerberos support will expose kerberos configuration and files
+    /// as a local volume
     pub fn with_kerberos(mut self, enabled: bool) -> Self {
         self.kerberos_enabled = enabled;
 

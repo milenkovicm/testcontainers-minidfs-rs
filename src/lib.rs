@@ -4,7 +4,9 @@ use log::info;
 use std::path::PathBuf;
 use testcontainers::{core::WaitFor, Image, ImageArgs, RunnableImage};
 
+/// Namenode Port
 pub const PORT_NAME_NODE: u16 = 9000;
+/// Namenode HTTP Port
 pub const PORT_NAME_NODE_HTTP: u16 = 8020;
 
 const PORT_DATA_N0DE_0: u16 = 50010;
@@ -26,7 +28,7 @@ pub struct MiniDFSBuilder {
 }
 
 impl MiniDFSBuilder {
-    /// Select tag for testcontainer image
+    /// Select tag for testcontainer
     pub fn with_tag(mut self, tag: &str) -> Self {
         self.tag = tag.to_string();
         self

@@ -4,7 +4,7 @@ version = "0.2.0"
 edition = "2021"
 
 license = "MIT"
-description = "HDFS Test Container"
+description = "Opinionated single node HDFS cluster captured in a testcontainer."
 homepage = "https://github.com/milenkovicm/testcontainers-minidfs-rs"
 repository = "https://github.com/milenkovicm/testcontainers-minidfs-rs"
 readme = "README.md"

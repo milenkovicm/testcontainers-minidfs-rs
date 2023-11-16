@@ -1,12 +1,18 @@
-# MiniDFS Cluster
+# Opinionated Single Node HDFS Cluster Testcontainer
 
 [![github action](https://github.com/milenkovicm/testcontainers-minidfs-rs/actions/workflows/basic.yml/badge.svg)](https://github.com/milenkovicm/testcontainers-minidfs-rs/actions/workflows/basic.yml)
 [![Crates.io](https://img.shields.io/crates/v/testcontainers-minidfs-rs)](https://crates.io/crates/testcontainers-minidfs-rs)
 [![Crates.io](https://img.shields.io/crates/d/testcontainers-minidfs-rs)](https://crates.io/crates/testcontainers-minidfs-rs)
 
-Testcontainer HDFS cluster using hadoop mini DFS.
+Opinionated single node HDFS (DFS) cluster captured in a testcontainer.
 
-```rust
+```toml
+testcontainers-minidfs-rs = "0.2"
+```
+
+Example:
+
+```rust, no_run
 use testcontainers::clients;
 use testcontainers_minidfs_rs::*;
 
@@ -51,4 +57,5 @@ All required files needed for hdfs client setup are exposed. (`kinit` will be ex
 
 ## Limitations
 
-- ports are hardcoded, thus only single instance per host is possible
+- Ports are hardcoded, thus only single instance per host is possible
+- Not many configuration option can be tunned

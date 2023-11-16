@@ -18,5 +18,7 @@ project-root = "0.2"
 
 [dev-dependencies]
 env_logger = "0.10"
-tokio = { version = "1", features = ["rt", "macros", "time"]}
-serial_test = { version = "2.0"}
+tokio = { version = "1", features = ["rt", "net", "io-util", "macros", "sync"] }
+serial_test = { version = "2.0" }
+hdfs-native = { version = "0.3" }
+ctor = { version = "0.2" }

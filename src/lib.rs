@@ -1,8 +1,11 @@
 #![doc = include_str!("../README.md")]
 
-use log::info;
+use log::{debug, info};
 use std::path::PathBuf;
-use testcontainers::{core::WaitFor, Image, ImageArgs, RunnableImage};
+use testcontainers::{
+    core::{Mount, WaitFor},
+    Image, ImageArgs, RunnableImage,
+};
 
 /// Namenode Port
 pub const PORT_NAME_NODE: u16 = 9000;
@@ -86,9 +89,12 @@ impl MiniDFSBuilder {
         .with_mapped_port((PORT_KERBEROS, PORT_KERBEROS));
 
         if self.config_volume || self.kerberos_enabled {
-            let volume_kerberos = config_path.unwrap();
-            let volume_kerberos = volume_kerberos.to_string_lossy();
+            let volume_kerberos_path = config_path.unwrap();
+            let volume_kerberos = volume_kerberos_path.to_string_lossy();
             if self.kerberos_enabled {
+                // we need to create dir if does not exist
+                // ignoring error, as it may already exist
+
                 info!(
                     "Kerberos support has been enabled, testcontainer will mount container volume to local directory: [{}]",
                 volume_kerberos
@@ -99,8 +105,11 @@ impl MiniDFSBuilder {
                 volume_kerberos
             );
             }
+            let target_dir_creation = std::fs::create_dir(&volume_kerberos_path);
+            debug!("local directory creation error: {} ", target_dir_creation.is_err());
 
-            image = image.with_volume((volume_kerberos, "/tmp/HDFS"))
+            let volume_hdfs = Mount::bind_mount(volume_kerberos, "/tmp/HDFS");
+            image = image.with_mount(volume_hdfs)
         }
 
         if self.kerberos_enabled {
@@ -195,4 +204,11 @@ impl Image for MiniDFS {
             message: String::from("testcontainers.hdfs.status.READY"),
         }]
     }
+}
+
+#[cfg(test)]
+#[ctor::ctor]
+fn init() {
+    // Enable RUST_LOG logging configuration for test
+    let _ = env_logger::builder().is_test(true).try_init();
 }

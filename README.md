@@ -8,19 +8,23 @@ Opinionated single node HDFS (DFS) cluster captured in a testcontainer.
 
 ```toml
 testcontainers-minidfs-rs = "0.2"
+testcontainers = "0.16"
 ```
 
 Example:
 
 ```rust, no_run
-use testcontainers::clients;
+use testcontainers::runners::AsyncRunner;
 use testcontainers_minidfs_rs::*;
 
-let docker = clients::Cli::default();
-let container = MiniDFS::runnable();
-let server_node = docker.run(container);
+#[tokio::main]
+async fn main() {
 
-let hdfs_namenode_url = format!("hdfs://{}:{}/", "localhost", server_node.get_host_port_ipv4(PORT_NAME_NODE));
+    let container = MiniDFS::runnable();
+    let server_node = container.start().await;
+
+    let hdfs_namenode_url = format!("hdfs://{}:{}/", "localhost", server_node.get_host_port_ipv4(PORT_NAME_NODE).await);
+}
 ```
 
 HDFS name node should be available at `hdfs://localhost:9000` and name node http at `http://localhost:8020`.
@@ -30,27 +34,29 @@ HDFS name node should be available at `hdfs://localhost:9000` and name node http
 MiniHDFS can be configured with kerberos support:
 
 ```rust, no_run
-use testcontainers::clients;
+use testcontainers::runners::AsyncRunner;
 use testcontainers_minidfs_rs::*;
 
-let docker = clients::Cli::default();
-let container = MiniDFS::builder().with_kerberos(true).build();
-let server_node = docker.run(container);
+#[tokio::main]
+async fn main() {
+    let container = MiniDFS::builder().with_kerberos(true).build();
+    let server_node = container.start().await;
+}
 ```
 
 MiniDFS will be configured to support kerberos and all required files will be exposed as a docker volume mounted in the target directory.
 
 ```rust, no_run
-use testcontainers::clients;
+use testcontainers::runners::AsyncRunner;
 use testcontainers_minidfs_rs::*;
 
 let container = MiniDFS::builder().with_kerberos(true).build();
 // pre-populated kerberos cache file (ccache)
-let kerberos_cache = container.inner().kerberos_cache();
+let kerberos_cache = container.image().kerberos_cache();
 // kerberos configuration file krb5.conf
-let kerberos_config = container.inner().kerberos_config();
+let kerberos_config = container.image().kerberos_config();
 // hadoop configuration core-site.xml
-let hdfs_config = container.inner().hdfs_config();
+let hdfs_config = container.image().hdfs_config();
 ```
 
 All required files needed for hdfs client setup are exposed. (`kinit` will be executed by the container, kerberos cache will be produced).

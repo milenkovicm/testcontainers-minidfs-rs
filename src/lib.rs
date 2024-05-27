@@ -201,7 +201,7 @@ impl Image for MiniDFS {
 
     fn ready_conditions(&self) -> Vec<WaitFor> {
         vec![WaitFor::StdOutMessage {
-            message: String::from("testcontainers.hdfs.status.READY"),
+            message: "testcontainers.hdfs.status.READY".into(),
         }]
     }
 }

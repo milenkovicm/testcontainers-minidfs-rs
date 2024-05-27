@@ -6,11 +6,11 @@ use testcontainers_minidfs_rs::*;
 #[serial_test::serial]
 async fn e2e_name_node_hello() {
     let container = MiniDFS::runnable();
-    let server_node = container.start().await;
+    let server_node = container.start().await.unwrap();
     let hdfs_server_url = format!(
         "hdfs://{}:{}/",
         "localhost",
-        server_node.get_host_port_ipv4(PORT_NAME_NODE).await
+        server_node.get_host_port_ipv4(PORT_NAME_NODE).await.unwrap()
     );
 
     let client = hdfs_native::Client::new(&hdfs_server_url).expect("HDFS client to be created");

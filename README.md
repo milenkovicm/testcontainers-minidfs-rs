@@ -21,9 +21,9 @@ use testcontainers_minidfs_rs::*;
 async fn main() {
 
     let container = MiniDFS::runnable();
-    let server_node = container.start().await;
+    let server_node = container.start().await.unwrap();
 
-    let hdfs_namenode_url = format!("hdfs://{}:{}/", "localhost", server_node.get_host_port_ipv4(PORT_NAME_NODE).await);
+    let hdfs_namenode_url = format!("hdfs://{}:{}/", "localhost", server_node.get_host_port_ipv4(PORT_NAME_NODE).await.unwrap());
 }
 ```
 

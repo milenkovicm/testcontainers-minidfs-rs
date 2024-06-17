@@ -7,8 +7,8 @@
 Opinionated single node HDFS (DFS) cluster captured in a testcontainer.
 
 ```toml
-testcontainers-minidfs-rs = "0.2"
-testcontainers = "0.16"
+testcontainers-minidfs-rs = "0.4"
+testcontainers = "0.18"
 ```
 
 Example:

@@ -3,13 +3,13 @@
 use log::{debug, info};
 use std::path::PathBuf;
 use testcontainers::{
-    core::{Mount, WaitFor},
-    Image, ImageArgs, RunnableImage,
+    core::{ContainerPort, Mount, WaitFor},
+    ContainerRequest, Image, ImageExt,
 };
 
-/// Namenode Port
+/// Name Node Port
 pub const PORT_NAME_NODE: u16 = 9000;
-/// Namenode HTTP Port
+/// Name Node HTTP Port
 pub const PORT_NAME_NODE_HTTP: u16 = 8020;
 
 const PORT_DATA_N0DE_0: u16 = 50010;
@@ -68,25 +68,25 @@ impl MiniDFSBuilder {
         root
     }
 
-    pub fn build(self) -> RunnableImage<MiniDFS> {
+    pub fn build(self) -> ContainerRequest<MiniDFS> {
         let config_path = if self.kerberos_enabled || self.config_volume {
             Some(Self::project_root_directory())
         } else {
             None
         };
 
-        let mut image = RunnableImage::from(MiniDFS {
+        let mut image = ContainerRequest::from(MiniDFS {
             tag: self.tag,
             config_path: config_path.clone(),
             kerberos_enabled: self.kerberos_enabled,
         })
-        .with_mapped_port((PORT_NAME_NODE, PORT_NAME_NODE))
-        .with_mapped_port((PORT_NAME_NODE_HTTP, PORT_NAME_NODE_HTTP))
-        .with_mapped_port((PORT_DATA_N0DE_0, PORT_DATA_N0DE_0))
-        .with_mapped_port((PORT_DATA_NODE_1, PORT_DATA_NODE_1))
-        .with_mapped_port((PORT_DATA_NODE_2, PORT_DATA_NODE_2))
-        .with_mapped_port((PORT_DATA_NODE_3, PORT_DATA_NODE_3))
-        .with_mapped_port((PORT_KERBEROS, PORT_KERBEROS));
+        .with_mapped_port(PORT_NAME_NODE, ContainerPort::Tcp(PORT_NAME_NODE))
+        .with_mapped_port(PORT_NAME_NODE_HTTP, ContainerPort::Tcp(PORT_NAME_NODE_HTTP))
+        .with_mapped_port(PORT_DATA_N0DE_0, ContainerPort::Tcp(PORT_DATA_N0DE_0))
+        .with_mapped_port(PORT_DATA_NODE_1, ContainerPort::Tcp(PORT_DATA_NODE_1))
+        .with_mapped_port(PORT_DATA_NODE_2, ContainerPort::Tcp(PORT_DATA_NODE_2))
+        .with_mapped_port(PORT_DATA_NODE_3, ContainerPort::Tcp(PORT_DATA_NODE_3))
+        .with_mapped_port(PORT_KERBEROS, ContainerPort::Tcp(PORT_KERBEROS));
 
         if self.config_volume || self.kerberos_enabled {
             let volume_kerberos_path = config_path.unwrap();
@@ -114,8 +114,8 @@ impl MiniDFSBuilder {
 
         if self.kerberos_enabled {
             image = image
-                .with_env_var(("KDC_ENABLED", "true"))
-                .with_env_var(("HOST_OS", std::env::consts::OS))
+                .with_env_var("KDC_ENABLED", "true")
+                .with_env_var("HOST_OS", std::env::consts::OS)
         }
 
         image
@@ -132,12 +132,12 @@ impl MiniDFS {
     }
 
     /// Runnable docker image
-    pub fn runnable() -> RunnableImage<MiniDFS> {
+    pub fn runnable() -> ContainerRequest<MiniDFS> {
         Self::builder().build()
     }
 
     /// Runnable docker image from a tag
-    pub fn runnable_from_tag(tag: &str) -> RunnableImage<MiniDFS> {
+    pub fn runnable_from_tag(tag: &str) -> ContainerRequest<MiniDFS> {
         Self::builder().with_tag(tag).build()
     }
     // core-site.xml
@@ -179,24 +179,13 @@ impl MiniDFS {
     }
 }
 
-#[derive(Debug, Default, Clone)]
-pub struct MiniDFSArgs;
-
-impl ImageArgs for MiniDFSArgs {
-    fn into_iterator(self) -> Box<dyn Iterator<Item = String>> {
-        Box::new(vec![].into_iter())
-    }
-}
-
 impl Image for MiniDFS {
-    type Args = MiniDFSArgs;
-
-    fn name(&self) -> String {
-        "milenkovicm/testcontainer-hdfs".into()
+    fn name(&self) -> &str {
+        "milenkovicm/testcontainer-hdfs"
     }
 
-    fn tag(&self) -> String {
-        self.tag.to_owned()
+    fn tag(&self) -> &str {
+        self.tag.as_str()
     }
 
     fn ready_conditions(&self) -> Vec<WaitFor> {

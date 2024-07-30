@@ -3,7 +3,7 @@
 use log::{debug, info};
 use std::path::PathBuf;
 use testcontainers::{
-    core::{ContainerPort, Mount, WaitFor},
+    core::{wait::LogWaitStrategy, ContainerPort, Mount, WaitFor},
     ContainerRequest, Image, ImageExt,
 };
 
@@ -189,9 +189,9 @@ impl Image for MiniDFS {
     }
 
     fn ready_conditions(&self) -> Vec<WaitFor> {
-        vec![WaitFor::StdOutMessage {
-            message: "testcontainers.hdfs.status.READY".into(),
-        }]
+        vec![WaitFor::Log(LogWaitStrategy::stdout(
+            "testcontainers.hdfs.status.READY",
+        ))]
     }
 }
 

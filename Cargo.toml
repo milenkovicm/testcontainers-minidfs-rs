@@ -13,7 +13,7 @@ keywords = ["testcontainers", "testing", "hdfs", "hsdoop", "integration-testing"
 
 [dependencies]
 log = "0.4"
-testcontainers = "^0.26"
+testcontainers = "^0.27"
 project-root = "0.2"
 
 [dev-dependencies]
